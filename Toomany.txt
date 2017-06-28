@@ -1,0 +1,47 @@
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture('C:\Users\MohammadIsmail\Desktop\TestVideo\Docket.mp4')
+ret, prevframe = cap.read()
+print prevframe.shape
+
+while (cap.isOpened()):
+    ret, frame = cap.read()
+    if (ret):
+        #lineframe=cv2.line(frame,(0,0),(854,480),(255,0,0),5)
+        #cv2.imshow('test',lineframe)
+        diff = cv2.absdiff(frame, prevframe)
+        cv2.imshow('frame0',frame)
+        blur = cv2.blur(frame, (5, 5))
+        hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
+        lower = np.array([18, 80, 85])
+        upper = np.array([35,150,140])
+        mask_image=cv2.inRange(hsv,lower,upper)
+        res = cv2.bitwise_and(frame, frame, mask=mask_image)
+        cv2.imshow('colour detection',res)
+
+        """#meanshift stuff down
+        hsv = cv2.cvtColor(diff, cv2.COLOR_BGR2HSV)
+        dst = cv2.calcBackProject([hsv], [0], roi_hist, [0, 180], 1) # meanshift/camshift on backprojection only
+        #cv2.imshow('dst',dst)
+        ret, track_window = cv2.CamShift(dst, track_window, term_crit)
+        x, y, w, h = track_window
+        img2 = cv2.rectangle(diff, (x, y), (x + w, y + h), 255, 2)
+        #cv2.imshow('img2', img2)
+        """
+
+        prevframe=frame
+
+        k=cv2.waitKey(20) & 0xFF
+        if k==27:
+            break
+
+cap.release()
+cv2.destroyAllWindows()
+
+
+
+"""
+if __name__ == "__main__":
+   main()
+"""

@@ -1,0 +1,40 @@
+import numpy as np
+import cv2
+
+def main():
+
+    cap = cv2.VideoCapture('C:\Users\MohammadIsmail\Desktop\TestVideo\Docket.mp4')
+    ret,prevframe=cap.read()
+    if ret:
+        firstgray = cv2.cvtColor(prevframe, cv2.COLOR_BGR2GRAY)
+    else:
+        print "error"
+        exit()
+
+
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        b1,g1,r1=cv2.split(frame)
+        if(ret):
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            blurt=cv2.GaussianBlur(gray,(5,5),0)
+            print gray.shape, firstgray.shape
+
+            #difference between two frames
+            diff=cv2.absdiff(firstgray,gray)
+            
+            output=cv2.bitwise_and(frame,diff)
+
+            #replacing previous frame with current one
+            firstgray=gray
+            cv2.imshow('frame',frame)
+            cv2.imshow('frame3', diff)
+            cv2.imshow('frame4', output)
+        if cv2.waitKey(30) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
